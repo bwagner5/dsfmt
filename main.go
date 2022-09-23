@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"flag"
 	"fmt"
 	"log"
 	"os"
@@ -9,6 +10,8 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/olekukonko/tablewriter"
 )
 
 // Example:
@@ -68,6 +71,7 @@ type DiskStat struct {
 	MinorNumber                   int
 	DeviceName                    string
 	ReadsCompleted                int
+	ReadsMerged                   int
 	SectorsRead                   int
 	TimeSpentReading              time.Duration
 	WritesCompleted               int
@@ -81,33 +85,51 @@ type DiskStat struct {
 	DiscardsMerged                int
 	SectorsDiscarded              int
 	TimeSpentDiscarding           time.Duration
+	FlushRequestsCompleted        int
+	TimeSpentFlushing             time.Duration
 }
 
 func main() {
+	short := flag.Bool("short", false, "Do not show Discard and Flush Stats")
+	flag.Parse()
 	scanner := bufio.NewScanner(os.Stdin)
 	stats := map[string][]DiskStat{}
+	colsLen := 0
 	for scanner.Scan() {
 		line := strings.TrimSpace(space.ReplaceAllString(scanner.Text(), " "))
-		fmt.Println(line)
+		if line == "" {
+			continue
+		}
 		cols := strings.Split(line, " ")
+		colsLen = len(cols)
+		if *short {
+			colsLen = 14
+		}
 		diskStat := DiskStat{
-			MajorNumber:                   MustAtoi(cols[0]),
-			MinorNumber:                   MustAtoi(cols[1]),
-			DeviceName:                    cols[2],
-			ReadsCompleted:                MustAtoi(cols[3]),
-			SectorsRead:                   MustAtoi(cols[4]),
-			TimeSpentReading:              MustParseDuration(fmt.Sprintf("%sms", cols[5])),
-			WritesCompleted:               MustAtoi(cols[6]),
-			WritesMerged:                  MustAtoi(cols[7]),
-			SectorsWritten:                MustAtoi(cols[8]),
-			TimeSpentWriting:              MustParseDuration(fmt.Sprintf("%sms", cols[9])),
-			IOsInProgress:                 MustAtoi(cols[10]),
-			TimeSpentDoingIOs:             MustParseDuration(fmt.Sprintf("%sms", cols[11])),
-			WeightedTimeSpentDoingIOs:     MustParseDuration(fmt.Sprintf("%sms", cols[12])),
-			DiscardsCompletedSuccessfully: MustAtoi(cols[13]),
-			DiscardsMerged:                MustAtoi(cols[14]),
-			SectorsDiscarded:              MustAtoi(cols[15]),
-			TimeSpentDiscarding:           MustParseDuration(fmt.Sprintf("%sms", cols[16])),
+			MajorNumber:               MustAtoi(cols[0]),
+			MinorNumber:               MustAtoi(cols[1]),
+			DeviceName:                cols[2],
+			ReadsCompleted:            MustAtoi(cols[3]),
+			ReadsMerged:               MustAtoi(cols[4]),
+			SectorsRead:               MustAtoi(cols[5]),
+			TimeSpentReading:          MustParseDuration(fmt.Sprintf("%sms", cols[6])),
+			WritesCompleted:           MustAtoi(cols[7]),
+			WritesMerged:              MustAtoi(cols[8]),
+			SectorsWritten:            MustAtoi(cols[9]),
+			TimeSpentWriting:          MustParseDuration(fmt.Sprintf("%sms", cols[10])),
+			IOsInProgress:             MustAtoi(cols[11]),
+			TimeSpentDoingIOs:         MustParseDuration(fmt.Sprintf("%sms", cols[12])),
+			WeightedTimeSpentDoingIOs: MustParseDuration(fmt.Sprintf("%sms", cols[13])),
+		}
+		if len(cols) > 14 {
+			diskStat.DiscardsCompletedSuccessfully = MustAtoi(cols[14])
+			diskStat.DiscardsMerged = MustAtoi(cols[15])
+			diskStat.SectorsDiscarded = MustAtoi(cols[16])
+			diskStat.TimeSpentDiscarding = MustParseDuration(fmt.Sprintf("%sms", cols[17]))
+		}
+		if len(cols) > 18 {
+			diskStat.FlushRequestsCompleted = MustAtoi(cols[18])
+			diskStat.TimeSpentFlushing = MustParseDuration(fmt.Sprintf("%sms", cols[19]))
 		}
 		stats[diskStat.DeviceName] = append(stats[diskStat.DeviceName], diskStat)
 	}
@@ -115,22 +137,53 @@ func main() {
 	if err := scanner.Err(); err != nil {
 		log.Println(err)
 	}
+	var data [][]string
 
-	fmt.Printf("| %s | %s | %s | %s | %s | %s | %s | %s | %s | %s | %s | %s | %s | %s | %s | %s | %s | \n",
-		"Major Number", "Minor Number", "Device Name", "Reads Completed", "Sectors Read", "Time Spent Reading",
-		"Writes Completed", "Writes Merged", "Sectors Written", "Time Spent Writing", "IOs In-Progress", "Time Spent Doing IOs",
-		"Weighted Time Spent Doing IOs", "Discards Completed Successfully", "Discards Merged", "Sectors Discarded", "Time Spent Discarding")
-	fmt.Println("| ------- | ------- | ------- | ------- | ------- | ------- | ------- | ------- | ------- | ------- | ------- | ------- | ------- | ------- | ------- | ------- | ------- |")
+	table := tablewriter.NewWriter(os.Stdout)
+	headers := []string{"Device",
+		"Reads / Merged", "Sectors Read", "Read Time",
+		"Writes / Merged", "Sectors Written", "Write Time",
+		"IOs Now", "IOs Time", "Weighted IOs Time"}
+	if colsLen > 14 {
+		headers = append(headers, "Discards / Merged", "Sectors Discarded", "Discard Time")
+	}
+	if colsLen > 18 {
+		headers = append(headers, "Flushes", "Time Flushing")
+	}
 	for _, stat := range stats {
 		for _, dev := range stat {
-			fmt.Printf("| %d | %d | %s | %d | %d | %s | %d | %d | %d | %s | %d | %s | %s | %d | %d | %d | %s | \n",
-				dev.MajorNumber, dev.MinorNumber, dev.DeviceName, dev.ReadsCompleted, dev.SectorsRead, dev.TimeSpentReading,
-				dev.WritesCompleted, dev.WritesMerged, dev.SectorsWritten, dev.TimeSpentWriting, dev.IOsInProgress, dev.TimeSpentDoingIOs,
-				dev.WeightedTimeSpentDoingIOs, dev.DiscardsCompletedSuccessfully, dev.DiscardsMerged, dev.SectorsDiscarded, dev.TimeSpentDiscarding)
+			row := []string{
+				fmt.Sprintf("%s %d/%d", dev.DeviceName, dev.MajorNumber, dev.MinorNumber),
+				fmt.Sprintf("%d / %d", dev.ReadsCompleted, dev.ReadsMerged),
+				fmt.Sprint(dev.SectorsRead),
+				fmt.Sprint(dev.TimeSpentReading),
+				fmt.Sprintf("%d / %d", dev.WritesCompleted, dev.WritesMerged),
+				fmt.Sprint(dev.SectorsWritten),
+				fmt.Sprint(dev.TimeSpentWriting),
+				fmt.Sprint(dev.IOsInProgress),
+				fmt.Sprint(dev.TimeSpentDoingIOs),
+				fmt.Sprint(dev.WeightedTimeSpentDoingIOs),
+			}
+			if colsLen > 14 {
+				row = append(row,
+					fmt.Sprintf("%d / %d", dev.DiscardsCompletedSuccessfully, dev.DiscardsMerged),
+					fmt.Sprint(dev.SectorsDiscarded),
+					fmt.Sprint(dev.TimeSpentDiscarding))
+			}
+			if colsLen > 18 {
+				row = append(row,
+					fmt.Sprint(dev.FlushRequestsCompleted),
+					fmt.Sprint(dev.TimeSpentFlushing))
+			}
+			data = append(data, row)
 		}
-
 	}
-
+	table.SetAutoMergeCellsByColumnIndex([]int{0})
+	table.SetRowLine(true)
+	table.SetHeader(headers)
+	table.SetBorder(false)
+	table.AppendBulk(data)
+	table.Render()
 }
 
 func MustParseDuration(s string) time.Duration {
