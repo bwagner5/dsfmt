@@ -2,6 +2,23 @@
 
 dsfmt (Dist Stats Formatter) is a simple CLI utility to format disk stats (aka cat /proc/diskstats). 
 
+## Why dsfmt?
+
+Do you love the output of `/proc/diskstats`? 
+
+```
+cat /proc/diskstats
+ 254       0 vda 1285 10 165446 341 5648 85195 6054016 10639 0 3649 12176 580 0 244025032 40 1131 1155
+ 254       1 vda1 1078 10 156526 311 5314 85195 6054000 10449 0 3483 10802 580 0 244025032 40 0 0
+```
+
+Do you have the man page memorized? 
+Maybe you love eye tests where you try to read large numbers with no commas?  
+Or you just love doing millisecond conversions.
+
+I don't like any of these things, so I made a tool that makes looking at disk stats a lot easier.
+
+
 ## Usage:
 
 ```
