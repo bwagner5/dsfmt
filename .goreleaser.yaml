@@ -33,7 +33,6 @@ nfpms:
     license: MIT
     
     formats:
-      - apk
       - deb
       - rpm
 brews:
