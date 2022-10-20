@@ -13,7 +13,9 @@ cat /proc/diskstats
 ```
 
 Do you have the man page memorized? 
+
 Maybe you love eye tests where you try to read large numbers with no commas?  
+
 Or you just love doing millisecond conversions.
 
 I don't like any of these things, so I made a tool that makes looking at disk stats a lot easier.
