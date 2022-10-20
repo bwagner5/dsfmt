@@ -14,6 +14,10 @@ cat /proc/diskstats
 
 Do you have the man page memorized? 
 
+Do you love counting columns to figure out what a number might be telling you?
+
+Do you love miscounting columns and realizing that everything is fine, or everything is on fire? 
+
 Maybe you love eye tests where you try to read large numbers with no commas?  
 
 Or you just love doing millisecond conversions.
