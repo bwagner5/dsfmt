@@ -2,7 +2,7 @@
 
 dsfmt (Dist Stats Formatter) is a simple CLI utility to format disk stats (aka cat /proc/diskstats). 
 
-# Usage:
+## Usage:
 
 ```
 > cat /proc/diskstats | dsfmt
@@ -41,3 +41,36 @@ Or use a shorter format which excludes Discard and Flush stats:
                     | 45 / 0         |          320 | 19ms      | 0 / 0           |               0 | 0s         |       0 | 40ms     | 0s
 --------------------+----------------+--------------+-----------+-----------------+-----------------+------------+---------+----------+--------------------
 ```
+
+## Installation
+
+Packages, binaries, and archives are published for all major platforms (Mac amd64/arm64 & Linux amd64/arm64):
+
+Debian / Ubuntu:
+
+```
+[[ `uname -m` == "aarch64" ]] && ARCH="arm64" || ARCH="amd64"
+OS=`uname | tr '[:upper:]' '[:lower:]'`
+wget https://github.com/bwagner5/dsfmt/releases/download/v0.0.2/dsfmt_0.0.2_${OS}_${ARCH}.deb
+dpkg --install dsfmt_0.0.2_linux_amd64.deb
+cat /proc/diskstats | dsfmt
+```
+
+RedHat:
+
+```
+[[ `uname -m` == "aarch64" ]] && ARCH="arm64" || ARCH="amd64"
+OS=`uname | tr '[:upper:]' '[:lower:]'`
+rpm -i https://github.com/bwagner5/dsfmt/releases/download/v0.0.2/dsfmt_0.0.2_${OS}_${ARCH}.rpm
+```
+
+Download Binary Directly:
+
+```
+[[ `uname -m` == "aarch64" ]] && ARCH="arm64" || ARCH="amd64"
+OS=`uname | tr '[:upper:]' '[:lower:]'`
+curl -Lo dsfmt https://github.com/bwagner5/dsfmt/releases/download/v0.0.2/dsfmt_0.0.2_${OS}_${ARCH} 
+chmod +x dsfmt
+```
+
+
