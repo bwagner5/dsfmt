@@ -7,6 +7,7 @@ import (
 	"log"
 	"os"
 	"regexp"
+	"sort"
 	"strconv"
 	"strings"
 	"time"
@@ -150,7 +151,8 @@ func main() {
 	if colsLen > 18 {
 		headers = append(headers, "Flushes", "Time Flushing")
 	}
-	for _, stat := range stats {
+	for _, statKey := range SortedKeys(stats) {
+		stat := stats[statKey]
 		for _, dev := range stat {
 			row := []string{
 				fmt.Sprintf("%s %d/%d", dev.DeviceName, dev.MajorNumber, dev.MinorNumber),
@@ -200,4 +202,13 @@ func MustAtoi(s string) int {
 		panic(fmt.Sprintf("cannot convert \"%s\" from string to int", s))
 	}
 	return i
+}
+
+func SortedKeys(m map[string][]DiskStat) []string {
+	var keys []string
+	for k := range m {
+		keys = append(keys, k)
+	}
+	sort.Strings(keys)
+	return keys
 }
