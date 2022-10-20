@@ -36,3 +36,14 @@ nfpms:
       - apk
       - deb
       - rpm
+brews:
+  -
+    tap:
+      owner: bwagner5
+      name: homebrew-wagner
+    caveats: "cat /proc/diskstats | dsfmt"
+    homepage: "https://github.com/bwagner5/dsfmt"
+    description: "diskstats formatter for humans"
+    license: "MIT"
+    test: |
+      system "#{bin}/dsfmt --help"
