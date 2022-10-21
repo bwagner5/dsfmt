@@ -10,10 +10,6 @@ builds:
       - linux_arm64
       - darwin_arm64
       - darwin_amd64
-archives:
-  - replacements:
-      darwin: Darwin
-      linux: Linux
 checksum:
   name_template: 'checksums.txt'
 snapshot:
@@ -26,12 +22,9 @@ changelog:
       - '^test:'
 nfpms:
   - maintainer: Brandon Wagner
-    
     description: |-
       a diskstats formatter for humans
-    
     license: MIT
-    
     formats:
       - deb
       - rpm
