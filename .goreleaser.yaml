@@ -46,3 +46,8 @@ brews:
     license: "MIT"
     test: |
       system "#{bin}/dsfmt --help"
+dockers:
+  -
+    image_templates:
+    - "ghcr.io/bwagner5/dsfmt:latest"
+    - "ghcr.io/bwagner5/dsfmt:{{ .Tag }}"
