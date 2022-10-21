@@ -51,3 +51,10 @@ dockers:
     image_templates:
     - "ghcr.io/bwagner5/dsfmt:latest"
     - "ghcr.io/bwagner5/dsfmt:{{ .Tag }}"
+    build_flag_templates:
+    - "--pull"
+    - "--label=org.opencontainers.image.created={{.Date}}"
+    - "--label=org.opencontainers.image.title={{.ProjectName}}"
+    - "--label=org.opencontainers.image.revision={{.FullCommit}}"
+    - "--label=org.opencontainers.image.version={{.Version}}"
+    - "--label=org.opencontainers.image.source=https://github.com/bwagner5/dsfmt"
