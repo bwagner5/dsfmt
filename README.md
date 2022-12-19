@@ -63,8 +63,8 @@ Debian / Ubuntu:
 ```
 [[ `uname -m` == "aarch64" ]] && ARCH="arm64" || ARCH="amd64"
 OS=`uname | tr '[:upper:]' '[:lower:]'`
-wget https://github.com/bwagner5/dsfmt/releases/download/v0.0.2/dsfmt_0.0.2_${OS}_${ARCH}.deb
-dpkg --install dsfmt_0.0.2_linux_amd64.deb
+wget https://github.com/bwagner5/dsfmt/releases/download/v0.0.7/dsfmt_0.0.7_${OS}_${ARCH}.deb
+dpkg --install dsfmt_0.0.7_linux_amd64.deb
 cat /proc/diskstats | dsfmt
 ```
 
@@ -73,7 +73,7 @@ RedHat:
 ```
 [[ `uname -m` == "aarch64" ]] && ARCH="arm64" || ARCH="amd64"
 OS=`uname | tr '[:upper:]' '[:lower:]'`
-rpm -i https://github.com/bwagner5/dsfmt/releases/download/v0.0.2/dsfmt_0.0.2_${OS}_${ARCH}.rpm
+rpm -i https://github.com/bwagner5/dsfmt/releases/download/v0.0.7/dsfmt_0.0.7_${OS}_${ARCH}.rpm
 ```
 
 Download Binary Directly:
@@ -81,7 +81,7 @@ Download Binary Directly:
 ```
 [[ `uname -m` == "aarch64" ]] && ARCH="arm64" || ARCH="amd64"
 OS=`uname | tr '[:upper:]' '[:lower:]'`
-curl -Lo dsfmt https://github.com/bwagner5/dsfmt/releases/download/v0.0.2/dsfmt_0.0.2_${OS}_${ARCH} 
+curl -Lo dsfmt https://github.com/bwagner5/dsfmt/releases/download/v0.0.7/dsfmt_0.0.7_${OS}_${ARCH} 
 chmod +x dsfmt
 ```
 
