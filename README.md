@@ -81,7 +81,7 @@ Download Binary Directly:
 ```
 [[ `uname -m` == "aarch64" ]] && ARCH="arm64" || ARCH="amd64"
 OS=`uname | tr '[:upper:]' '[:lower:]'`
-curl -Lo dsfmt https://github.com/bwagner5/dsfmt/releases/download/v0.0.7/dsfmt_0.0.7_${OS}_${ARCH} 
+wget -qO- https://github.com/bwagner5/dsfmt/releases/download/v0.0.7/dsfmt_0.0.7_${OS}_${ARCH}.tar.gz | tar xvz
 chmod +x dsfmt
 ```
 
