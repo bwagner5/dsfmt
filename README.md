@@ -1,6 +1,6 @@
 # dsfmt
 
-dsfmt (Dist Stats Formatter) is a simple CLI utility to format disk stats (aka cat /proc/diskstats). 
+dsfmt (Disk Stats Formatter) is a simple CLI utility to format disk stats (aka cat /proc/diskstats). 
 
 ## Why dsfmt?
 
